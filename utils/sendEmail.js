@@ -3,16 +3,16 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// ===============================
+// ======================================
 // CREATE SMTP TRANSPORTER
-// ===============================
+// ======================================
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
 
-  port:  465,
+  port: 465,
 
-  secure: false,
+  secure: true,
 
   // FORCE IPV4
   family: 4,
@@ -22,27 +22,30 @@ const transporter = nodemailer.createTransport({
     pass: process.env.SMTP_PASS,
   },
 
-  connectionTimeout: 20000,
-  greetingTimeout: 20000,
-  socketTimeout: 20000,
-
   tls: {
     rejectUnauthorized: false,
   },
+
+  connectionTimeout: 30000,
+  greetingTimeout: 30000,
+  socketTimeout: 30000,
 });
 
-// ===============================
+// ======================================
 // VERIFY SMTP CONNECTION
-// ===============================
+// ======================================
 
 const verifySMTP = async () => {
   try {
+
     await transporter.verify();
 
     console.log("=================================");
     console.log("SMTP SERVER READY ✅");
     console.log("=================================");
+
   } catch (error) {
+
     console.log("=================================");
     console.log("SMTP CONNECTION ERROR ❌");
     console.log(error.message);
@@ -52,12 +55,13 @@ const verifySMTP = async () => {
 
 verifySMTP();
 
-// ===============================
+// ======================================
 // SEND OTP EMAIL
-// ===============================
+// ======================================
 
 export const sendOTPEmail = async (email, otp) => {
   try {
+
     const info = await transporter.sendMail({
       from: `"MakeMyTrip Clone" <${process.env.SMTP_USER}>`,
 
@@ -151,7 +155,9 @@ export const sendOTPEmail = async (email, otp) => {
     console.log("=================================");
 
     return true;
+
   } catch (error) {
+
     console.log("=================================");
     console.log("EMAIL SENDING FAILED ❌");
     console.log(error.message);
