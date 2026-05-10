@@ -14,8 +14,9 @@ const transporter = nodemailer.createTransport({
 
   secure: true,
 
-  // FORCE IPV4
   family: 4,
+
+  requireTLS: true,
 
   auth: {
     user: process.env.SMTP_USER,
@@ -26,9 +27,9 @@ const transporter = nodemailer.createTransport({
     rejectUnauthorized: false,
   },
 
-  connectionTimeout: 30000,
-  greetingTimeout: 30000,
-  socketTimeout: 30000,
+  connectionTimeout: 60000,
+  greetingTimeout: 60000,
+  socketTimeout: 60000,
 });
 
 // ======================================
@@ -56,13 +57,15 @@ const verifySMTP = async () => {
 verifySMTP();
 
 // ======================================
-// SEND OTP EMAIL
+// SEND OTP EMAIL FUNCTION
 // ======================================
 
 export const sendOTPEmail = async (email, otp) => {
+
   try {
 
     const info = await transporter.sendMail({
+
       from: `"MakeMyTrip Clone" <${process.env.SMTP_USER}>`,
 
       to: email,
@@ -80,6 +83,7 @@ export const sendOTPEmail = async (email, otp) => {
             border-radius: 10px;
           "
         >
+
           <h2
             style="
               color: #008cff;
@@ -144,6 +148,7 @@ export const sendOTPEmail = async (email, otp) => {
             If you didn't request this email,
             please ignore it.
           </p>
+
         </div>
       `,
     });
@@ -163,7 +168,7 @@ export const sendOTPEmail = async (email, otp) => {
     console.log(error.message);
     console.log("=================================");
 
-    // FALLBACK OTP LOG
+    // FALLBACK OTP
     console.log("\n=================================");
     console.log(`[FALLBACK OTP FOR ${email}] : ${otp}`);
     console.log("=================================\n");
