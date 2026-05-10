@@ -8,7 +8,9 @@ dotenv.config();
 // ===============================
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: "smtp-relay.brevo.com",
+  port: 587,
+  secure: false, // 587 के लिए false
 
   auth: {
     user: process.env.SMTP_USER,
@@ -52,7 +54,7 @@ verifySMTP();
 export const sendOTPEmail = async (email, otp) => {
   try {
     const info = await transporter.sendMail({
-      from: `"MakeMyTrip Clone" <${process.env.SMTP_USER}>`,
+      from: `"MakeMyTrip" <${process.env.SMTP_SENDER || process.env.SMTP_USER}>`,
 
       to: email,
 
@@ -75,7 +77,7 @@ export const sendOTPEmail = async (email, otp) => {
               text-align: center;
             "
           >
-            MakeMyTrip Clone
+            MakeMyTrip
           </h2>
 
           <p>Hello User,</p>
