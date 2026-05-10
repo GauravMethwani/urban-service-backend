@@ -3,19 +3,18 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// ======================
-// CREATE TRANSPORTER
-// ======================
+// ===============================
+// CREATE SMTP TRANSPORTER
+// ===============================
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
-
   host: "smtp.gmail.com",
 
   port: 587,
 
   secure: false,
 
+  // FORCE IPV4
   family: 4,
 
   auth: {
@@ -23,18 +22,18 @@ const transporter = nodemailer.createTransport({
     pass: process.env.SMTP_PASS,
   },
 
-  connectionTimeout: 15000,
-  greetingTimeout: 15000,
-  socketTimeout: 15000,
+  connectionTimeout: 20000,
+  greetingTimeout: 20000,
+  socketTimeout: 20000,
 
   tls: {
     rejectUnauthorized: false,
   },
 });
 
-// ======================
+// ===============================
 // VERIFY SMTP CONNECTION
-// ======================
+// ===============================
 
 const verifySMTP = async () => {
   try {
@@ -42,7 +41,6 @@ const verifySMTP = async () => {
 
     console.log("=================================");
     console.log("SMTP SERVER READY ✅");
-    console.log("Host:", process.env.SMTP_HOST);
     console.log("=================================");
   } catch (error) {
     console.log("=================================");
@@ -54,9 +52,9 @@ const verifySMTP = async () => {
 
 verifySMTP();
 
-// ======================
+// ===============================
 // SEND OTP EMAIL
-// ======================
+// ===============================
 
 export const sendOTPEmail = async (email, otp) => {
   try {
@@ -147,7 +145,7 @@ export const sendOTPEmail = async (email, otp) => {
     });
 
     console.log("=================================");
-    console.log(`EMAIL SENT SUCCESSFULLY ✅`);
+    console.log("EMAIL SENT SUCCESSFULLY ✅");
     console.log(`TO: ${email}`);
     console.log(info.response);
     console.log("=================================");

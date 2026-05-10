@@ -8,41 +8,73 @@ const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString()
 
 const signup = async (req, res) => {
     try {
+
         const { name, email, password, role } = req.body;
-        
+
         let user = await User.findOne({ email });
-        
-        // If user exists and is already verified, then block
+
+        // If user exists and already verified
         if (user && user.isVerified) {
-            return res.status(400).json({ success: false, message: 'User already exists and is verified. Please login.' });
+            return res.status(400).json({
+                success: false,
+                message: 'User already exists and is verified. Please login.'
+            });
         }
 
         const salt = await bcrypt.genSalt(10);
+
         const hashedPassword = await bcrypt.hash(password, salt);
 
         if (user) {
+
             // Update existing unverified user
             user.name = name;
             user.password = hashedPassword;
             user.role = role;
+
             await user.save();
+
         } else {
-            // Create new user record
-            user = new User({ name, email, password: hashedPassword, role });
+
+            // Create new user
+            user = new User({
+                name,
+                email,
+                password: hashedPassword,
+                role
+            });
+
             await user.save();
         }
 
+        // GENERATE OTP
         const otpCode = generateOTP();
-        // Delete any old OTPs for this email first
-        await OTP.deleteMany({ email });
-        await OTP.create({ email, otp: otpCode });
-        
-        // Attempt to send real email
-        await sendOTPEmail(email, otpCode);
 
-        res.status(201).json({ success: true, message: 'OTP sent to email. Please verify.' });
+        // DELETE OLD OTP
+        await OTP.deleteMany({ email });
+
+        // SAVE NEW OTP
+        await OTP.create({
+            email,
+            otp: otpCode
+        });
+
+        // SEND EMAIL (WITHOUT AWAIT)
+        sendOTPEmail(email, otpCode);
+
+        // RETURN RESPONSE FAST
+        return res.status(201).json({
+            success: true,
+            message: 'OTP sent to email. Please verify.'
+        });
+
     } catch (err) {
-        res.status(500).json({ success: false, message: 'Server error', error: err.message });
+
+        return res.status(500).json({
+            success: false,
+            message: 'Server error',
+            error: err.message
+        });
     }
 };
 
