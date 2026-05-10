@@ -5,6 +5,7 @@ import paymentRoutes from './payment.routes.js';
 
 const injectRoutes = (app) => {
     // Note: authRoutes might still be a function, checking that next
+    app.get('/api/ping', (req, res) => res.json({ success: true, message: 'pong' }));
     app.use('/api/auth', authRoutes);
     app.use('/api/services', serviceRoutes);
     app.use('/api/bookings', bookingRoutes);
