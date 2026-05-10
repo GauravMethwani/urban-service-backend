@@ -8,15 +8,13 @@ dotenv.config();
 // ======================================
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+
+  // DIRECT GMAIL IPV4
+  host: "74.125.24.108",
 
   port: 465,
 
   secure: true,
-
-  family: 4,
-
-  requireTLS: true,
 
   auth: {
     user: process.env.SMTP_USER,
@@ -24,6 +22,7 @@ const transporter = nodemailer.createTransport({
   },
 
   tls: {
+    servername: "smtp.gmail.com",
     rejectUnauthorized: false,
   },
 
@@ -37,6 +36,7 @@ const transporter = nodemailer.createTransport({
 // ======================================
 
 const verifySMTP = async () => {
+
   try {
 
     await transporter.verify();
